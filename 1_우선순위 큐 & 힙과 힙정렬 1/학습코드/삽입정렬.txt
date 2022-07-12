@@ -1,0 +1,24 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include <string.h>
+
+int main(void) {
+	int i, j, temp;
+	int array[10] = { 1,10,5,8,7,6,4,3,2,9 };
+
+	for (i = 0; i < 9; i++) {
+		j = i;		// 현재 정렬할 그 원소를 선택해서 적절한 위치에 삽입할 수 있도록 함
+		while (array[j] > array[j + 1]) {		// 왼쪽 값이 더 크다면 swap
+			temp = array[j];
+			array[j] = array[j + 1];
+			array[j + 1] = temp;
+			j--;		// j는 1씩 감소(가능한 모든자리 살펴보기)
+		}
+	}
+	for (i = 0; i < 10; i++)
+		printf("%d ", array[i]); 
+
+	return 0;
+}
