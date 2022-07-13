@@ -1,0 +1,25 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include <string.h>
+
+int main(void) {
+	int i, j, temp;
+	int array[10] = { 1,10,5,8,7,6,4,3,2,9 };
+
+	for (int pass = 0; pass < 9; pass++) {		// 외부반복문은 0~n-2까지 실행
+		int minLoc = pass;
+		for (j = pass + 1; j < 10; j++)			// 내부반복문은 0~n-1까지 실행
+			if (array[j] < array[minLoc])		// 뒤에서 가장 작은 숫자의 index 찾기
+				minLoc = j;
+		temp = array[pass];
+		array[pass] = array[minLoc];
+		array[minLoc] = temp;
+	}
+
+	for (i = 0; i < 10; i++)
+		printf("%d ", array[i]); 
+
+	return 0;
+}

@@ -1,0 +1,25 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include <string.h>
+
+int main(void) {
+	int i, j;
+	int array[10] = { 1,10,5,8,7,6,4,3,2,9 };
+
+	for (int pass = 1; pass < 10; pass++) {
+		int save = array[pass];
+		j = pass - 1;
+		while ((j >= 0) && (array[j] > save)) {
+			array[j + 1] = array[j];
+			j--;
+		}
+		array[j + 1] = save;
+	}
+
+	for (i = 0; i < 10; i++)
+		printf("%d ", array[i]); 
+
+	return 0;
+}
