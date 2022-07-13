@@ -1,0 +1,31 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include <string.h>
+
+int main(void) {
+	int n, temp;
+	scanf("%d", &n);
+	getchar();
+	int* A = (int*)malloc(n * sizeof(int));
+	for (int i = 0; i < n; i++)
+		scanf("%d", A + i);
+
+	for (int i = n - 1; i >= 1; i--) {
+		int maxLoc = i;
+		for (int j = i - 1; j >= 0; j--) {
+			if (A[j] > A[maxLoc])
+				maxLoc = j;
+		}
+		temp = A[i];
+		A[i] = A[maxLoc];
+		A[maxLoc] = temp;
+	}
+	
+
+	for (int i = 0; i < n; i++)
+		printf(" %d", A[i]); 
+
+	return 0;
+}
