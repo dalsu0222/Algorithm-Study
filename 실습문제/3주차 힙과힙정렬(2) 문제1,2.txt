@@ -1,0 +1,75 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include <string.h>
+int H[100];
+int n;		//힙의 크기(총 키 개수)
+
+void inPlaceHeapSort();
+void printArray();
+void insertItem(int);
+void upHeap(int);
+void downHeap(int, int);		// 인자 2개 이용
+
+int main(void) {
+	int num, k;
+	scanf("%d", &k);
+	getchar();
+	for (int i = 1; i <= k; i++) {
+		scanf("%d", &num);
+		insertItem(num);
+	}
+	inPlaceHeapSort();
+	printArray();
+
+	return 0;
+}
+void inPlaceHeapSort() {
+	for (int i = n; i >= 2; i--) {
+		int tmp = H[1];
+		H[1] = H[i];
+		H[i] = tmp;
+		downHeap(1, i - 1);
+	}
+}
+
+void printArray() {
+	for (int i = 1; i <= n; i++)
+		printf(" %d", H[i]);
+	printf("\n");
+}
+
+void insertItem(int key) {
+	n++;		// n 갱신
+	H[n] = key;		// 힙의 초기 삽입 위치는 n
+	upHeap(n);		// 힙 조정
+	return;		// 있어도 되고 없어도 되는 문구
+}
+
+void upHeap(int i) {		// 최대힙
+	if (i == 1)
+		return;
+	if (H[i] <= H[i / 2])
+		return;
+	int tmp = H[i];
+	H[i] = H[i / 2];
+	H[i / 2] = tmp;
+	upHeap(i / 2);
+}
+
+void downHeap(int i, int last) {
+	if ((last < i * 2) && (last < i * 2 + 1))		// 단말노드인경우( 크기가 자식노드 위치보다 작은 경우 )
+		return;
+	int bigger = i * 2;
+	if (last >= i * 2 + 1) {		// 오른쪽 자식 노드가 존재한다면
+		if (H[i * 2 + 1] > H[bigger])		// 오른쪽 자식 노드 값이 크다면 bigger 갱신
+			bigger = i * 2 + 1;
+	}
+	if (H[i] >= H[bigger])		// bigger보다 현재(i) 값이 더 크다면 힙 유지
+		return;
+	int tmp = H[i];
+	H[i] = H[bigger];
+	H[bigger] = tmp;
+	downHeap(bigger,last);
+}
