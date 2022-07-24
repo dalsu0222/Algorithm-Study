@@ -1,0 +1,63 @@
+// https://man-25-1.tistory.com/156 참고
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include <string.h>
+int H[100];
+int n;		//힙의 크기(총 키 개수)
+
+void rBuildHeap(int);		// 재귀
+void buildHeap();			// 비재귀
+void downHeap(int);
+void printHeap();
+
+int main(void) {
+	scanf("%d", &n);
+	getchar();
+	for (int i = 1; i <= n; i++)
+		scanf("%d", &H[i]);
+
+	//rBuildHeap(1);
+	buildHeap();
+	printHeap();
+
+	return 0;
+}
+void rBuildHeap(int i) {		// 재귀 방식 알고리즘
+	if (i > n)
+		return;
+	rBuildHeap(2*i);
+	rBuildHeap(2 * i + 1);
+	downHeap(i);
+	return;
+}
+
+void buildHeap() {		// 비재귀 방식 알고리즘
+	for (int i = n / 2; i >= 1; i--) 
+		downHeap(i);
+	return;
+}
+
+/* 삽입식의 downHeap과 printHeap를 그대로 사용하면 됨. */
+void downHeap(int i) {
+	if ((n < i * 2) && (n < i * 2 + 1))		// 단말노드인경우( 크기가 자식노드 위치보다 작은 경우 )
+		return;
+	int bigger = i * 2;
+	if (n >= i * 2 + 1) {		// 오른쪽 자식 노드가 존재한다면
+		if (H[i * 2 + 1] > H[bigger])		// 오른쪽 자식 노드 값이 크다면 bigger 갱신
+			bigger = i * 2 + 1;
+	}
+	if (H[i] > H[bigger])		// bigger보다 현재(i) 값이 더 크다면 힙 유지
+		return;
+	int tmp = H[i];
+	H[i] = H[bigger];
+	H[bigger] = tmp;
+	downHeap(bigger);
+}
+
+void printHeap() {		// 레벨순서( = 인덱스 순서)로 인쇄
+	for (int i = 1; i <= n; i++)
+		printf(" %d", H[i]);
+	printf("\n");
+}

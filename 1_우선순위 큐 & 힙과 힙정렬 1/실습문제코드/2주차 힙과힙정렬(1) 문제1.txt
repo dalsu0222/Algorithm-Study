@@ -1,0 +1,82 @@
+
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include <string.h>
+int H[100];
+int n;		//힙의 크기(총 키 개수)
+
+void insertItem(int);
+int removeMax();
+void upHeap(int);
+void downHeap(int);
+void printHeap();
+
+int main(void) {
+	int key;	char type;
+	while (1) {
+		scanf("%c", &type);
+		if (type == 'i') {
+			scanf("%d", &key);
+			insertItem(key);		// 키를 힙에 삽입
+			printf("0\n");
+		}
+		else if (type == 'd')
+			printf("%d\n", removeMax());
+		else if (type == 'p')
+			printHeap();
+		else if (type == 'q')
+			break;
+		getchar();
+	}
+
+	return 0;
+}
+void insertItem(int key) {
+	n++;		// n 갱신
+	H[n] = key;		// 힙의 초기 삽입 위치는 n
+	upHeap(n);		// 힙 조정
+	return;
+}
+
+int removeMax() {
+	int key = H[1];		// 루트 키 보관
+	H[1] = H[n];		// 힙의 마지막 키를 루트로 이동
+	n--;		// n 갱신
+	downHeap(1);		// 힙 조정
+	return key;		// 삭제 키 반환
+}
+
+void upHeap(int i) {		// 최대힙
+	if (i == 1)
+		return;
+	if (H[i] <= H[i / 2])
+		return;
+	int tmp = H[i];
+	H[i] = H[i / 2];
+	H[i / 2] = tmp;
+	upHeap(i / 2);
+}
+
+void downHeap(int i) {
+	if ((n < i * 2) && (n < i * 2 + 1))		// 단말노드인경우( 크기가 자식노드 위치보다 작은 경우 )
+		return;
+	int bigger = i * 2;
+	if (n >= i * 2 + 1) {		// 오른쪽 자식 노드가 존재한다면
+		if (H[i * 2 + 1] > H[bigger])		// 오른쪽 자식 노드 값이 크다면 bigger 갱신
+			bigger = i * 2 + 1;
+	}
+	if (H[i] > H[bigger])		// bigger보다 현재(i) 값이 더 크다면 힙 유지
+		return;
+	int tmp = H[i];
+	H[i] = H[bigger];
+	H[bigger] = tmp;
+	downHeap(bigger);
+}
+
+void printHeap() {		// 레벨순서( = 인덱스 순서)로 인쇄
+	for (int i = 1; i <= n; i++)
+		printf(" %d", H[i]);
+	printf("\n");
+}
