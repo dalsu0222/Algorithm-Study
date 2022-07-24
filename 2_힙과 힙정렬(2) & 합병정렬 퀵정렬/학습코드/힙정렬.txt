@@ -1,0 +1,52 @@
+
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include <string.h>
+
+int number = 9;
+int heap[9] = { 7,6,5,8,3,5,9,1,6 };
+
+int main(void) {
+	// 먼저 전체 트리 구조를 힙 구조로 바꿉니다.(최대 힙 구조)
+	for (int i = 1; i < number; i++) {
+		int c = i;
+		do {
+			int root = (c - 1) / 2;		// c의 부모노드
+			if (heap[root] < heap[c]) {
+				int temp = heap[root];
+				heap[root] = heap[c];
+				heap[c] = temp;
+			}
+			c = root;		// 자식의 부모로 이동해서 반복적으로 (재귀) 수행
+		} while (c != 0);
+	}
+	// 크기를 줄여가며 반복적으로 힙을 구성
+	for(int i = number - 1; i >= 0; i--) {
+		// 맨 위 노드(가장 큰 값)와 맨 마지막의 노드를 바꿔줌
+		int temp = heap[0];	
+		heap[0] = heap[i];	
+		heap[i] = temp;
+		int root = 0;
+		int c = 1;
+		// 힙 구조 만들기
+		do {
+			c = 2 * root + 1;	// c는 루트의 자식
+			// 자식중에 더 큰 값을 찾기
+			if (heap[c] < heap[c + 1] && c < i - 1)
+				c++;		// 오른쪽 자식이 더 크다면 c 1증가시켜서 맞춰줌
+			//루트보다 자식이 더 크다면 교환
+			if (heap[root] < heap[c] && c < i) {
+				int temp = heap[root];
+				heap[root] = heap[c];
+				heap[c] = temp;
+			}
+			root = c;		// c를 루트로 이동시켜서 재귀적으로 작동되게 함
+		} while (c < i);
+	}
+	for (int i = 0; i < number; i++)
+		printf("%d ", heap[i]);
+
+	return 0;
+}
