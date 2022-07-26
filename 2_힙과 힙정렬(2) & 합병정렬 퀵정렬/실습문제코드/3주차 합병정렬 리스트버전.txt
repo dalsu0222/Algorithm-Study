@@ -11,10 +11,10 @@ typedef struct ListNode {
 typedef struct {
 	ListNode* H;		// 포인터 헤더 생성
 	int size;
-}ListType;			
+}ListType;
 
 void mergeSort(ListType* L);
-void merge(ListType*L, ListType* L1, ListType* L2);
+void merge(ListType* L, ListType* L1, ListType* L2);
 int N;
 
 void init(ListType* L) {
@@ -26,7 +26,7 @@ int isEmpty(ListType* L) {
 	return L->H == NULL;
 }
 
-void insert(ListType* L, int e) {		
+void insert(ListType* L, int e) {
 	ListNode* node = (ListNode*)malloc(sizeof(ListNode));
 	node->elem = e;
 	node->next = L->H;
@@ -72,7 +72,7 @@ void mg_partition(ListType* L, ListType* L1, ListType* L2, int pos) {		// 리스
 	// position까지가 L1, 그 뒤가 L2
 	// L1, L2제외 추가 공간 사용 X, L의 공간 그대로 사용하여 분할
 	ListNode* p = L->H;
-	for (int i = 1; i <= pos; i++){
+	for (int i = 1; i <= pos; i++) {
 		insert(L1, p->elem);
 		p = p->next;
 	}
@@ -80,9 +80,7 @@ void mg_partition(ListType* L, ListType* L1, ListType* L2, int pos) {		// 리스
 		insert(L2, p->elem);
 		p = p->next;
 	}
-
 	free(p);
-	
 }
 
 int main(void) {
@@ -99,7 +97,7 @@ int main(void) {
 	}
 
 	mergeSort(&L);
-	
+
 	print(&L);
 
 	return 0;
@@ -110,11 +108,11 @@ void mergeSort(ListType* L) {
 		init(&L1);	init(&L2);
 		mg_partition(L, &L1, &L2, L->size / 2);
 		mergeSort(&L1);
-		mergeSort(&L2);	// error (L1,L2 전역변수 X)
+		mergeSort(&L2);	
 		merge(L, &L1, &L2);
 	}
 }
-void merge(ListType*L, ListType* L1, ListType* L2) {
+void merge(ListType* L, ListType* L1, ListType* L2) {
 	init(L);
 	while (!isEmpty(L1) && !isEmpty(L2)) {
 		if (get(L1) <= get(L2))
