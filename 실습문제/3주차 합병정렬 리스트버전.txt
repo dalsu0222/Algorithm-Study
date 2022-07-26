@@ -1,0 +1,129 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include <string.h>
+typedef struct ListNode {
+	int elem;
+	struct ListNode* next;
+}ListNode;
+
+typedef struct {
+	ListNode* H;		// 포인터 헤더 생성
+	int size;
+}ListType;			
+
+void mergeSort(ListType* L);
+void merge(ListType*L, ListType* L1, ListType* L2);
+int N;
+
+void init(ListType* L) {
+	L->H = NULL;
+	L->size = 0;
+}
+
+int isEmpty(ListType* L) {
+	return L->H == NULL;
+}
+
+void insert(ListType* L, int e) {		
+	ListNode* node = (ListNode*)malloc(sizeof(ListNode));
+	node->elem = e;
+	node->next = L->H;
+	L->H = node;			//첫 node의 주소 연결 
+	L->size++;
+}
+
+void insertLast(ListType* L, int e) {
+	ListNode* node = (ListNode*)malloc(sizeof(ListNode));
+	node->elem = e;
+	node->next = NULL;
+
+	ListNode* p = L->H;		// p는 노드를 가리키는 포인터용도.
+	if (p == NULL) { // NULL에서 시작하는 경우(첫 노드일경우)
+		L->H = node;
+	}
+	else {
+		while (p->next != NULL)		// p != NULL 해버리면 새로운 노드를 연결할 수 없게 됨
+			p = p->next;
+		p->next = node;
+	}
+}
+
+int deleteFirst(ListType* L) {
+	ListNode* p = L->H;
+	int e = p->elem;
+	L->H = p->next;
+	free(p);
+	return e;
+}
+
+int get(ListType* L) {
+	return L->H->elem;
+}
+
+void print(ListType* L) {
+	for (ListNode* p = L->H; p != NULL; p = p->next)
+		printf(" %d", p->elem);
+	printf("\n");
+}
+
+void mg_partition(ListType* L, ListType* L1, ListType* L2, int pos) {		// 리스트 분할
+	// position까지가 L1, 그 뒤가 L2
+	// L1, L2제외 추가 공간 사용 X, L의 공간 그대로 사용하여 분할
+	ListNode* p = L->H;
+	for (int i = 1; i <= pos; i++){
+		insert(L1, p->elem);
+		p = p->next;
+	}
+	for (int i = pos + 1; i <= L->size; i++) {
+		insert(L2, p->elem);
+		p = p->next;
+	}
+
+	free(p);
+	
+}
+
+int main(void) {
+	scanf("%d", &N);
+	getchar();
+
+	ListType L;
+	init(&L);
+
+	int tmp;
+	for (int i = 0; i < N; i++) {
+		scanf("%d", &tmp);
+		insert(&L, tmp);
+	}
+
+	mergeSort(&L);
+	
+	print(&L);
+
+	return 0;
+}
+void mergeSort(ListType* L) {
+	if (L->size > 1) {
+		ListType L1, L2;
+		init(&L1);	init(&L2);
+		mg_partition(L, &L1, &L2, L->size / 2);
+		mergeSort(&L1);
+		mergeSort(&L2);	// error (L1,L2 전역변수 X)
+		merge(L, &L1, &L2);
+	}
+}
+void merge(ListType*L, ListType* L1, ListType* L2) {
+	init(L);
+	while (!isEmpty(L1) && !isEmpty(L2)) {
+		if (get(L1) <= get(L2))
+			insertLast(L, deleteFirst(L1));
+		else
+			insertLast(L, deleteFirst(L2));
+	}
+	while (!isEmpty(L1))
+		insertLast(L, deleteFirst(L1));
+	while (!isEmpty(L2))
+		insertLast(L, deleteFirst(L2));
+}
