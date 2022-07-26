@@ -1,0 +1,65 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include <string.h>
+
+int N;
+int* B;
+
+void mergeSort(int*);
+void rmergeSort(int*, int, int);
+void merge(int*, int, int, int);
+//void mg_partition(int*, int);
+
+int main(void) {
+	scanf("%d", &N);
+	getchar();
+
+	int* L = (int*)malloc(N * sizeof(int));
+	B = (int*)malloc(N * sizeof(int));
+
+	for (int i = 0; i < N; i++)
+		scanf("%d", L + i);
+	
+	mergeSort(L);
+	for (int i = 0; i < N; i++)
+		printf(" %d", L[i]);
+
+	return 0;
+}
+void mergeSort(int*A) {
+	rmergeSort(A, 0, N - 1);
+}
+void rmergeSort(int*A, int left, int right) {
+	if (left < right) {
+		int middle = (left + right) / 2;
+		rmergeSort(A, left, middle);		// 중앙 기준 왼쪽 합병정렬
+		rmergeSort(A, middle + 1, right);	// 중앙 기준 오른쪽 합병정렬
+		merge(A, left, middle, right);		// 2개의 정렬된 배열 합병
+	}
+}
+void merge(int* A, int left,int middle,int right) {
+	int i = left;
+	int j = middle + 1;	
+	int k = left;
+	// 작은 순서대로 배열에 삽입
+	while (i <= middle && j <= right) {		// i는 middle까지 가고 j는 right까지 감
+		if (A[i] <= A[j])
+			B[k++] = A[i++];
+		else
+			B[k++] = A[j++];
+	}
+	// 남은 데이터도 삽입
+	while (i <= middle)		// L1 데이터가 남은 상황
+		B[k++] = A[i++];
+	while (j <= right)		// L2 데이터가 남은 상황
+		B[k++] = A[j++];
+	// 정렬된 배열을 원래 배열에 삽입
+	for (k = left; k <= right; k++)
+		A[k] = B[k];
+}
+/*
+void mg_partition(int*, int) {
+	
+*/
