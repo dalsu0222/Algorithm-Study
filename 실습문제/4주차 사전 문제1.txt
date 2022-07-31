@@ -1,0 +1,48 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include <string.h>
+
+int N;		// 배열 크기
+int* D;		//사전
+int t;		// x <= K 인덱스 저장
+
+int findElement(int);
+int rFE(int, int, int);
+
+int main(void) {
+	int k;		// 탐색할 키 k
+	int result;
+	scanf("%d %d", &N, &k);
+	getchar();
+
+	D = (int*)malloc(N * sizeof(int));
+	for (int i = 0; i < N; i++)
+		scanf("%d", &D[i]);
+
+	result = findElement(k);
+	if (result == -1)	// 사전에서 k가 존재하지 않을 때
+		printf(" %d\n", t);
+	else
+		printf(" %d\n", result);
+
+	return 0;
+}
+int findElement(int k) {
+	return rFE(k, 0, N - 1);
+}
+int rFE(int k, int l, int r) {
+	if (l > r)
+		return -1;
+	int mid = (l + r) / 2;
+	if (k == D[mid])
+		return mid;
+	else if (k < D[mid])
+		return rFE(k, l, mid - 1);
+	else {		// k > D[mid] 
+		t = mid;
+		return rFE(k, mid + 1, r);
+	}
+		
+}
