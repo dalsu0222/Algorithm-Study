@@ -1,0 +1,189 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include <string.h>
+
+struct node {
+	int key;
+	struct node* parent;
+	struct node* lChild;
+	struct node* rChild;
+};
+int isExternal(struct node* w) {
+	if ((w->lChild == NULL) && (w->rChild == NULL))
+		return 1;
+	else
+		return 0;
+}
+int isInternal(struct node* w) {
+	if ((w->lChild != NULL) && (w->rChild != NULL))
+		return 1;
+	else
+		return 0;
+}
+struct node* sibling(struct node* w) {
+	if (w->parent == NULL)		// root has no sibling
+		return;
+	if (w->parent->lChild == w)
+		return w->parent->rChild;
+	else 
+		return w->parent->lChild;
+}
+struct node* inOrderSucc(struct node* w) {
+	w = w->rChild;
+	if (isExternal(w))
+		return;
+	while (isInternal(w->lChild))
+		w = w->lChild;
+
+	return w;
+}
+void reduceExternal(struct node* root, struct node* z) {
+	struct node* w, * zs, * g;
+	w = z->parent;
+	zs = sibling(z);
+
+	if (w->parent == NULL) {
+		root->lChild = zs->lChild;
+		root->rChild = zs->rChild;
+		root->lChild->parent = zs;
+		root->rChild->parent = zs;
+		zs->parent = NULL;
+	}
+	else {
+		g = w->parent;
+		zs->parent = g;
+		if (w == g->lChild)
+			g->lChild = zs;
+		else if (w == g->rChild)
+			g->rChild = zs;
+	}
+
+	free(z);
+	free(w);
+
+	return zs;
+}
+struct node* treeSearch(struct node* w, int k) {
+	if (isExternal(w))
+		return w;
+	if (w->key == k)
+		return w;
+	else if (w->key > k)
+		return treeSearch(w->lChild, k);
+	else 
+		return treeSearch(w->rChild, k);
+}
+void insertItem(struct node* w, int k) {
+	struct node* lChildNode = (struct node*)malloc(sizeof(struct node));
+	struct node* rChildNode = (struct node*)malloc(sizeof(struct node));
+	struct node* p = treeSearch(w, k);
+
+	p->key = k;
+	p->lChild = lChildNode;
+	p->rChild = rChildNode;
+
+	lChildNode->parent = p;
+	rChildNode->parent = p;
+
+	lChildNode->lChild = NULL;
+	lChildNode->rChild = NULL;
+	rChildNode->lChild = NULL;
+	rChildNode->rChild = NULL;
+}
+int removeElement(struct node* w, int k) {
+	struct node* p = treeSearch(w, k);
+	struct node* z, * y;
+	int e;
+
+	if (isExternal(p))		// 삭제할 키가 없는 경우
+		return -1;
+
+	e = p->key;
+	z = p->lChild;
+	if (!isExternal(z))
+		z = p->rChild;
+	if (isExternal(z))
+		reduceExternal(p, z);
+	else {
+		y = inOrderSucc(p);		// 중위순위 후계자 y가 삭제한 노드 위치에 오도록 한다.
+		z = y->lChild;
+		p->key = y->key;
+		reduceExternal(p, z);
+	}
+
+	return e;
+}
+void findElement(struct node* root, int k) {
+	struct node* w = treeSearch(root, k);
+	if (isInternal(w))
+		printf("%d\n", k);
+	else
+		printf("X\n");
+}
+void printTree(struct node* w) {
+	if (isExternal(w))
+		return;
+	else {		// 전위순회로 인쇄
+		printf(" %d", w->key);
+		printTree(w->lChild);
+		printTree(w->rChild);
+	}
+
+}
+void freeTree(struct node* w) {
+	if (isExternal(w))
+		return;
+	else {		// 후위순회로 해제
+		freeTree(w->lChild);
+		freeTree(w->rChild);
+		free(w);
+	}
+}
+
+int main(void) {
+	char type;
+	int key, value;
+	struct node* w = (struct node*)malloc(sizeof(struct node));
+	w->parent = NULL;
+	w->lChild = NULL;
+	w->rChild = NULL;
+	while (1) {
+		scanf("%c", &type);
+		if (type == 'i') {
+			scanf("%d", &key);
+			insertItem(w, key);
+			getchar();
+		}
+		else if (type == 'd') {
+			scanf("%d", &key);
+			value = removeElement(w, key);
+			if (value == -1)
+				printf("X\n");
+			else
+				printf("%d\n", value);
+			getchar();
+		}
+
+		else if (type == 's') {
+			scanf("%d", &key);
+			if (treeSearch(w, key)->key != key)
+				printf("X\n");
+			else
+				printf("%d\n", treeSearch(w, key)->key);
+			getchar();
+		}
+
+		else if (type == 'p') {
+			printTree(w);
+			printf("\n");
+		}
+		else if (type == 'q')
+			break;
+	}
+
+	freeTree(w);
+
+	return 0;
+}
